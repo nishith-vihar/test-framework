@@ -1,5 +1,4 @@
 log_file: /var/log/tests/gluster_tests.log
-log_level: DEBUG
 
 # 'servers' is list of Hostnames/IP's of servers in the cluster.
 # This section has to be defined.
@@ -34,41 +33,29 @@ clients:
 
 servers_info:
     *server_vm1: &server1
-        devices: ["/dev/vdb", "/dev/vdc", "/dev/vdd", "/dev/vde"]
-        brick_root: "/bricks"
+        brick_root: ["/bricks"]
     *server_vm2: &server2
-        devices: ["/dev/vdb", "/dev/vdc", "/dev/vdd", "/dev/vde"]
-        brick_root: "/bricks"
+        brick_root: ["/bricks"]
     *server_vm3: &server3
-        devices: ["/dev/vdb", "/dev/vdc", "/dev/vdd", "/dev/vde"]
-        brick_root: "/bricks"
+        brick_root: ["/bricks"]
     *server_vm4: &server4
-        devices: ["/dev/vdb", "/dev/vdc", "/dev/vdd", "/dev/vde"]
-        brick_root: "/bricks"
+        brick_root: ["/bricks"]
     *server_vm5: &server5
-        devices: ["/dev/vdb", "/dev/vdc", "/dev/vdd", "/dev/vde"]
-        brick_root: "/bricks"
+        brick_root: ["/bricks"]
     *server_vm6: &server6
-        devices: ["/dev/vdb", "/dev/vdc", "/dev/vdd", "/dev/vde"]
-        brick_root: "/bricks"
+        brick_root: ["/bricks"]
     *server_vm7: &server7
-        devices: ["/dev/vdb", "/dev/vdc", "/dev/vdd", "/dev/vde"]
-        brick_root: "/bricks"
+        brick_root: ["/bricks"]
     *server_vm8: &server8
-        devices: ["/dev/vdb", "/dev/vdc", "/dev/vdd", "/dev/vde"]
-        brick_root: "/bricks"
+        brick_root: ["/bricks"]
     *server_vm9: &server9
-        devices: ["/dev/vdb", "/dev/vdc", "/dev/vdd", "/dev/vde"]
-        brick_root: "/bricks"
+        brick_root: ["/bricks"]
     *server_vm10: &server10
-        devices: ["/dev/vdb", "/dev/vdc", "/dev/vdd", "/dev/vde"]
-        brick_root: "/bricks"
+        brick_root: ["/bricks"]
     *server_vm11: &server11
-        devices: ["/dev/vdb", "/dev/vdc", "/dev/vdd", "/dev/vde"]
-        brick_root: "/bricks"
+        brick_root: ["/bricks"]
     *server_vm12: &server12
-        devices: ["/dev/vdb", "/dev/vdc", "/dev/vdd", "/dev/vde"]
-        brick_root: "/bricks"
+        brick_root: ["/bricks"]
 
 # 'clients_info' is info about each client in  the cluster.
 # each client_info is a dict with 'Hostname/IP' of the client as key.
@@ -78,16 +65,12 @@ servers_info:
 # This section has to be defined.
 clients_info:
     *client_vm1: &client1
-        host: *client_vm1
     *client_vm2: &client2
-        host: *client_vm2
         super_user: 'root'
     *client_vm3: &client3
-        host: *client_vm3
         super_user: 'Admin'
         platform: 'windows'
     *client_vm4: &client4
-        host: *client_vm4
         super_user: 'Administrator'
         platform: 'windows'
 
@@ -168,7 +151,7 @@ gluster:
             replica_count: 3
             arbiter_count: 1
             transport: tcp
-        distributed-replicated: &distributed-replicated
+        distributed-replicated: &distributed_replicated
             dist_count: 2
             replica_count: 3
             transport: tcp
@@ -176,7 +159,7 @@ gluster:
             disperse_count: 6
             redundancy_count: 2
             transport: tcp
-        distributed-dispersed: &distributed-dispersed
+        distributed-dispersed: &distributed_dispersed
             dist_count: 2
             disperse_count: 6
             redundancy_count: 2
@@ -185,7 +168,7 @@ gluster:
             replica_count: 3
             arbiter_count: 1
             transport: tcp
-        distributed-arbiter: &distrbuted-arbiter
+        distributed-arbiter: &distrbuted_arbiter
             dist_count: 2
             replica_count: 3
             arbiter_count: 1
@@ -218,7 +201,7 @@ gluster:
     # of all the slave volumes.
     slave_volumes:
         - &slave_vol1
-            voltype: *distributed-replicated
+            voltype: *distributed_replicated
             servers:  [ *server_vm5, *server_vm6, *server_vm7, *server_vm8 ]
             extra_servers: []
             quota:
@@ -247,12 +230,13 @@ gluster:
     volumes:
         - &vol1
             name: testvol
-            voltype: *distributed-dispersed
+            voltype: *distributed_dispersed
             servers: [ *server_vm1, *server_vm2, *server_vm3, *server_vm4 ]
 
     #   'extra_servers' : To be used in case of add new servers to the cluster
     #                     in case of add-brick, replace-brick, attach-tier etc.
-            extra_servers: [ *server_vm9, *server_vm10, *server_vm11, *server_vm12 ]
+            extra_servers: [ *server_vm9, *server_vm10,
+                             *server_vm11, *server_vm12 ]
 
     #   'tier' : Tiering related info. set 'create_tier' to 'true' to attach
     #           tier during volume setup when the tests calls glusto-tests
@@ -260,7 +244,7 @@ gluster:
     #           'tier_type' defines the tier volume type.
             tier:
                 create_tier: False
-                tier_type: *distributed-replicated
+                tier_type: *distributed_replicated
 
     #   'quota' : Quota related info. setting 'enable' to 'True' enables quota
     #           during volume setup when the tests calls glusto-tests
@@ -331,7 +315,8 @@ gluster:
             protocol: 'glusterfs'
             server: *server_vm1
             volname: testvol
-            client: *client1
+            client:
+                host: *client_vm1
             mountpoint: ''
             options: ''
         - &mount2
@@ -347,7 +332,8 @@ gluster:
             protocol: 'smb'
             server: *server_vm2
             volname: testvol
-            client: *client3
+            client:
+                host: *client_vm3
             mountpoint: ''
             options: ''
             smbuser: 'user1'
@@ -359,8 +345,6 @@ gluster:
             volname: testvol
             client:
                 host: *client_vm4
-                super_user: 'Administrator'
-                platform: 'windows'
             mountpoint: ''
             options: ''
             smbuser: 'user2'
