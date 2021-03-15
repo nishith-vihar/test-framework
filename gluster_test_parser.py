@@ -1,22 +1,31 @@
+"""
+This module consists a single class - Parser,which
+parses the configuration file given the filepath.
+"""
 import yaml
-import argparse
 
 
 class Parser():
+    """
+    This class consists an API which parses the
+    configuration file from the filepath. The
+    API is called from the ParamsHandler module.
+    """
 
     @staticmethod
-    def generate_config_hashmap(filepath):
-        """Function to generate hashmap"""
+    def generate_config_hashmap(filepath: str) -> dict:
+        """
+        Function to generate hashmap
+        Args:
+            filepath (str): Path for the config file.
+        Rerturns:
+            Hahsmap for config file as a dictionary.
+        """
         try:
-            configfd = open(filepath,'r')
+            configfd = open(filepath, 'r')
             config_hashmap = yaml.load(configfd, Loader=yaml.FullLoader)
             configfd.close()
             return config_hashmap
-        except Exception as err:
-            print(err)
+        except IOError:
+            print("Error: can\'t find config file or read data.")
             return None
-
-    
-
-
-
